@@ -10,6 +10,9 @@ def get_env(name: str, default: str = "") -> str:
     return os.environ.get(name, default)
 
 
+# AWS
+AWS_REGION = get_env("AWS_REGION", "us-east-1")
+
 # Table names
 TRIPS_TABLE = get_env("TRIPS_TABLE", "TravelBuddy-Trips")
 DOCUMENTS_TABLE = get_env("DOCUMENTS_TABLE", "TravelBuddy-Documents")
@@ -18,6 +21,9 @@ AGENT_RUNS_TABLE = get_env("AGENT_RUNS_TABLE", "TravelBuddy-AgentRuns")
 
 # S3
 UPLOAD_BUCKET = get_env("UPLOAD_BUCKET", "travel-buddy-uploads")
+
+# Pinecone
+PINECONE_INDEX_NAME = get_env("PINECONE_INDEX_NAME", "travel-buddy")
 
 # External service keys (resolved from Secrets Manager at runtime)
 PINECONE_API_KEY_SECRET = get_env("PINECONE_API_KEY_SECRET")

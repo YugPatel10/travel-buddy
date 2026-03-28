@@ -8,26 +8,26 @@
 - [x] 1.4 Create `backend/` with Python project structure (`pyproject.toml`, `requirements.txt`, `lambdas/`, `shared/`)
 - [x] 1.5 Create `infra/` as a CDK TypeScript project (`cdk init app --language typescript`)
 - [x] 1.6 Add a root `README.md` with project overview, setup instructions, and architecture summary
-- [-] 1.7 Git commit and push: `feat: scaffold monorepo with frontend, backend, and infra`
+- [x] 1.7 Git commit and push: `feat: scaffold monorepo with frontend, backend, and infra`
 
 ## Task 2: CDK Infrastructure — Storage & Auth
 
-- [ ] 2.1 Create `storage-stack.ts` with S3 bucket for document uploads (versioned, lifecycle rules, CORS for frontend uploads)
-- [ ] 2.2 Create DynamoDB tables in `storage-stack.ts`: Trips table (PK: `USER#userId`, SK: `TRIP#tripId`), ScoutResults table, Documents table, AgentRuns table — all with on-demand billing and TTL where specified
-- [ ] 2.3 Create `auth-stack.ts` with Cognito User Pool (email/password sign-up, email verification) and User Pool Client for the frontend
-- [ ] 2.4 Wire up the CDK app entry point (`bin/app.ts`) to instantiate storage and auth stacks
-- [ ] 2.5 Git commit and push: `feat(infra): add storage and auth CDK stacks`
+- [x] 2.1 Create `storage-stack.ts` with S3 bucket for document uploads (versioned, lifecycle rules, CORS for frontend uploads)
+- [x] 2.2 Create DynamoDB tables in `storage-stack.ts`: Trips table (PK: `USER#userId`, SK: `TRIP#tripId`), ScoutResults table, Documents table, AgentRuns table — all with on-demand billing and TTL where specified
+- [x] 2.3 Create `auth-stack.ts` with Cognito User Pool (email/password sign-up, email verification) and User Pool Client for the frontend
+- [x] 2.4 Wire up the CDK app entry point (`bin/app.ts`) to instantiate storage and auth stacks
+- [x] 2.5 Git commit and push: `feat(infra): add storage and auth CDK stacks`
 
 ## Task 3: CDK Infrastructure — API Gateway & Lambda Functions
 
-- [ ] 3.1 Create `api-stack.ts` with REST API Gateway and Cognito authorizer
-- [ ] 3.2 Create Trip Lambda function (`backend/lambdas/trip/handler.py`) with CRUD operations: create, list, get, update, delete trips in DynamoDB
-- [ ] 3.3 Create Document Lambda function (`backend/lambdas/document/handler.py`) with presigned URL generation for S3 uploads and document listing/detail endpoints
-- [ ] 3.4 Create Chat Lambda function (`backend/lambdas/chat/handler.py`) as a stub that accepts user messages and returns placeholder responses
-- [ ] 3.5 Create Briefing Lambda function (`backend/lambdas/briefing/handler.py`) as a stub that returns placeholder briefing data
-- [ ] 3.6 Define all API routes in CDK connecting endpoints to Lambda functions with proper IAM permissions
-- [ ] 3.7 Create shared Python utilities: `shared/models.py` (Pydantic models for Trip, Document, ScoutResult), `shared/dynamo.py` (DynamoDB helper), `shared/config.py` (env config)
-- [ ] 3.8 Git commit and push: `feat(infra): add API Gateway, Lambda functions, and shared utils`
+- [x] 3.1 Create `api-stack.ts` with REST API Gateway and Cognito authorizer
+- [x] 3.2 Create Trip Lambda function (`backend/lambdas/trip/handler.py`) with CRUD operations: create, list, get, update, delete trips in DynamoDB
+- [x] 3.3 Create Document Lambda function (`backend/lambdas/document/handler.py`) with presigned URL generation for S3 uploads and document listing/detail endpoints
+- [x] 3.4 Create Chat Lambda function (`backend/lambdas/chat/handler.py`) as a stub that accepts user messages and returns placeholder responses
+- [x] 3.5 Create Briefing Lambda function (`backend/lambdas/briefing/handler.py`) as a stub that returns placeholder briefing data
+- [x] 3.6 Define all API routes in CDK connecting endpoints to Lambda functions with proper IAM permissions
+- [x] 3.7 Create shared Python utilities: `shared/models.py` (Pydantic models for Trip, Document, ScoutResult), `shared/dynamo.py` (DynamoDB helper), `shared/config.py` (env config)
+- [-] 3.8 Git commit and push: `feat(infra): add API Gateway, Lambda functions, and shared utils`
 
 ## Task 4: Document Ingestion Pipeline
 

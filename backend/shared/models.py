@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -59,3 +59,23 @@ class ScoutResult(BaseModel):
     details: dict = Field(default_factory=dict)
     url: Optional[str] = None
     scouted_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    ttl: Optional[int] = None  # Unix epoch for DynamoDB TTL auto-expiry (30 days)
+
+
+class AgentDecision(BaseModel):
+    node: str
+    condition: str
+    result: str
+    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class AgentRun(BaseModel):
+    trip_id: str
+    run_id: str
+    agent_type: str  # "scout" | "parser" | "gym_finder" | "summarizer"
+    status: str = "running"  # "running" | "completed" | "failed"
+    input: dict[str, Any] = Field(default_factory=dict)
+    output: dict[str, Any] = Field(default_factory=dict)
+    decisions: list[AgentDecision] = Field(default_factory=list)
+    started_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    completed_at: Optional[str] = None
