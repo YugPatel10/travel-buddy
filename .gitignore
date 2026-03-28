@@ -1,0 +1,11 @@
+node_modules/
+.next/
+cdk.out/
+__pycache__/
+*.pyc
+.env
+.env.local
+*.egg-info/
+dist/
+build/
+.DS_Store

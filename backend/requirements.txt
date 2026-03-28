@@ -1,0 +1,13 @@
+# Core
+boto3>=1.35.0
+pydantic>=2.9.0
+ulid-py>=1.1.0
+
+# Agent / LangGraph
+langgraph>=0.2.0
+langchain-aws>=0.2.0
+pinecone-client>=5.0.0
+firecrawl-py>=1.0.0
+tavily-python>=0.5.0
+googlemaps>=4.10.0
+requests>=2.32.0
