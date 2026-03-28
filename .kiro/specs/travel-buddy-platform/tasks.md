@@ -27,17 +27,17 @@
 - [x] 3.5 Create Briefing Lambda function (`backend/lambdas/briefing/handler.py`) as a stub that returns placeholder briefing data
 - [x] 3.6 Define all API routes in CDK connecting endpoints to Lambda functions with proper IAM permissions
 - [x] 3.7 Create shared Python utilities: `shared/models.py` (Pydantic models for Trip, Document, ScoutResult), `shared/dynamo.py` (DynamoDB helper), `shared/config.py` (env config)
-- [-] 3.8 Git commit and push: `feat(infra): add API Gateway, Lambda functions, and shared utils`
+- [x] 3.8 Git commit and push: `feat(infra): add API Gateway, Lambda functions, and shared utils`
 
 ## Task 4: Document Ingestion Pipeline
 
-- [ ] 4.1 Add S3 event notification in CDK that triggers a Lambda on object upload to the `uploads/` prefix
-- [ ] 4.2 Implement document processing Lambda: receive S3 event, call Amazon Textract `analyze_document` for text extraction
-- [ ] 4.3 Structure extracted text into JSON (dates, locations, costs, confirmation numbers) using Bedrock Claude for intelligent parsing
-- [ ] 4.4 Implement embedding generation using Amazon Titan Embed v2 via Bedrock runtime
-- [ ] 4.5 Implement Pinecone upsert: store embeddings with metadata (userId, tripId, docId, contentType, location)
-- [ ] 4.6 Update Documents table status through the pipeline: `uploaded` → `processing` → `parsed` / `failed`
-- [ ] 4.7 Git commit and push: `feat(backend): add document ingestion pipeline with Textract and embeddings`
+- [x] 4.1 Add S3 event notification in CDK that triggers a Lambda on object upload to the `uploads/` prefix
+- [x] 4.2 Implement document processing Lambda: receive S3 event, call Amazon Textract `analyze_document` for text extraction
+- [x] 4.3 Structure extracted text into JSON (dates, locations, costs, confirmation numbers) using Bedrock Claude for intelligent parsing
+- [x] 4.4 Implement embedding generation using Amazon Titan Embed v2 via Bedrock runtime
+- [x] 4.5 Implement Pinecone upsert: store embeddings with metadata (userId, tripId, docId, contentType, location)
+- [x] 4.6 Update Documents table status through the pipeline: `uploaded` → `processing` → `parsed` / `failed`
+- [-] 4.7 Git commit and push: `feat(backend): add document ingestion pipeline with Textract and embeddings`
 
 ## Task 5: LangGraph Agent Orchestration
 

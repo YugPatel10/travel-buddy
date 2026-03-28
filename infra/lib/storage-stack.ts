@@ -1,6 +1,10 @@
 import * as cdk from "aws-cdk-lib";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as s3n from "aws-cdk-lib/aws-s3-notifications";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as path from "path";
 import { Construct } from "constructs";
 
 export class StorageStack extends cdk.Stack {
@@ -12,6 +16,14 @@ export class StorageStack extends cdk.Stack {
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // Parameter for Pinecone API key (pass at deploy time or via Secrets Manager)
+    new cdk.CfnParameter(this, "PineconeApiKey", {
+      type: "String",
+      description: "Pinecone API key for vector storage",
+      default: "",
+      noEcho: true,
+    });
 
     this.documentsBucket = new s3.Bucket(this, "DocumentsBucket", {
       versioned: true,
@@ -60,6 +72,37 @@ export class StorageStack extends cdk.Stack {
       description: "S3 bucket for travel document uploads",
     });
 
+    // --- Document Processor Lambda (triggered by S3 uploads) ---
+
+    const backendRoot = path.join(__dirname, "..", "..", "backend");
+
+    const documentProcessorLambda = new lambda.Function(
+      this,
+      "DocumentProcessorLambda",
+      {
+        runtime: lambda.Runtime.PYTHON_3_12,
+        handler: "handler.handler",
+        code: lambda.Code.fromAsset(
+          path.join(backendRoot, "lambdas", "document_processor")
+        ),
+        environment: {
+          DOCUMENTS_BUCKET: this.documentsBucket.bucketName,
+        },
+        timeout: cdk.Duration.minutes(5),
+        memorySize: 512,
+      }
+    );
+
+    // Grant the Lambda read access to the S3 bucket
+    this.documentsBucket.grantRead(documentProcessorLambda);
+
+    // Trigger the Lambda on object creation in the uploads/ prefix
+    this.documentsBucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED,
+      new s3n.LambdaDestination(documentProcessorLambda),
+      { prefix: "uploads/" }
+    );
+
     // Trips table: PK = USER#<userId>, SK = TRIP#<tripId>
     this.tripsTable = new dynamodb.Table(this, "TripsTable", {
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
@@ -87,6 +130,42 @@ export class StorageStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
     });
+
+    // Grant the document processor Lambda access to the Documents table
+    this.documentsTable.grantReadWriteData(documentProcessorLambda);
+    documentProcessorLambda.addEnvironment(
+      "DOCUMENTS_TABLE",
+      this.documentsTable.tableName
+    );
+
+    // Grant Textract permissions for document text extraction
+    documentProcessorLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["textract:AnalyzeDocument", "textract:DetectDocumentText"],
+        resources: ["*"],
+      })
+    );
+
+    // Grant Bedrock permissions for Claude (parsing) and Titan Embed v2 (embeddings)
+    documentProcessorLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["bedrock:InvokeModel"],
+        resources: [
+          `arn:aws:bedrock:${this.region}::foundation-model/anthropic.claude-3-haiku-20240307-v1:0`,
+          `arn:aws:bedrock:${this.region}::foundation-model/amazon.titan-embed-text-v2:0`,
+        ],
+      })
+    );
+
+    // Pinecone API key and index name (resolved at deploy time via env vars)
+    documentProcessorLambda.addEnvironment(
+      "PINECONE_API_KEY",
+      cdk.Fn.ref("PineconeApiKey")
+    );
+    documentProcessorLambda.addEnvironment(
+      "PINECONE_INDEX_NAME",
+      "travel-buddy"
+    );
 
     // AgentRuns table: PK = TRIP#<tripId>, SK = RUN#<runId>
     this.agentRunsTable = new dynamodb.Table(this, "AgentRunsTable", {
